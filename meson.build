@@ -8,7 +8,8 @@ args = ['-std=c++17',
 ]
 
 src = files(
-  'src/main.cpp'
+  'src/main.cpp',
+  'src/sql.cpp'
 )
 
 incl = include_directories('include')
