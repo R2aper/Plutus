@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+using namespace Plutus;
+
 void usage();
 void version();
 
@@ -14,14 +16,9 @@ void print_table(const Table &table) {
   }
 }
 
-using namespace Plutus;
-
 int main(void) {
   try {
     auto db = CreateDatabase("financy.db");
-
-    sql::Statement query(db, "SELECT t.id, t.date, t.note, t.amount, t.category_id, c.name "
-                             "FROM transactions t JOIN categories c ON t.category_id = c.id");
 
     Table table = GetAllCategoriesTable(db);
     Table table2 = GetAllTransactionsTable(db);
