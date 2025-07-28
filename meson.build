@@ -9,11 +9,12 @@ args = ['-std=c++17',
 
 src = files(
   'src/main.cpp',
-  'src/sql.cpp'
+  'src/sql.cpp',
+  'src/utils.cpp'
 )
 
 incl = include_directories('include')
 
-sqlitecpp = dependency('sqlitecpp',version: '3.3.2')
+sqlitecpp = dependency('sqlitecpp',version: '>=3.3.2')
 
 executable('plutus',src,include_directories: incl, cpp_args: args, dependencies: sqlitecpp)

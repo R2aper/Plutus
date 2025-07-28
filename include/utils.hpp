@@ -1,6 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include <string>
+#include <vector>
 
 #ifdef _WIN32
 #define PATH fs::path(std::string("homedir") + std::string("\\Documents\\ft\\"))
@@ -25,18 +27,15 @@ struct Category {
   double available_amount;
   double spent_amount;
 
-  friend std::ostream &operator<<(std::ostream &os, const Category &ct) {
-    os << "Id: " << ct.id << std::endl
-       << "Name: " << ct.name << std::endl
-       << "Excpected ammount: " << ct.expected_amount << std::endl
-       << "Available amount: " << ct.available_amount << std::endl
-       << "Spent amount: " << ct.spent_amount;
-    return os;
-  }
+  /// @brief return string representation of Category
+  std::vector<std::string> ToColumn() const;
+
+  friend std::ostream &operator<<(std::ostream &os, const Category &ct);
 };
 
 /// @brief struct for storing Transaction's data
 struct Transaction {
+  // Currency curr;
   int64 id;
   std::string date;
   std::string note;
@@ -44,15 +43,14 @@ struct Transaction {
   int64 category_id;
   std::string category;
 
-  friend std::ostream &operator<<(std::ostream &os, const Transaction &tr) {
-    os << "Id: " << tr.id << std::endl
-       << "Date: " << tr.date << std::endl
-       << "Note: " << tr.note << std::endl
-       << "Amount: " << tr.amount << std::endl
-       << "Category id: " << tr.category_id << std::endl
-       << "Category name: " << tr.category;
-    return os;
-  }
+  /// @brief return string representation of Transaction
+  std::vector<std::string> ToColumn() const;
+
+  friend std::ostream &operator<<(std::ostream &os, const Transaction &tr);
 };
+
+using Categories = std::vector<Category>;
+using Transactions = std::vector<Transaction>;
+using Table = std::vector<std::vector<std::string>>;
 
 }; // namespace Plutus

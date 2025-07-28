@@ -35,4 +35,22 @@ void InsertCategory(sql::Database &db, Category &ct);
  */
 void InsertTransaction(sql::Database &db, Transaction &tr);
 
+/**
+ * @brief Make a sql request and get all categories from database
+ *
+ * @param db A reference to the SQLite database
+ * @return vector of Categories or string representation of them
+ */
+Categories GetAllCategories(const sql::Database &db);
+Table GetAllCategoriesTable(const sql::Database &db);
+
+/**
+ * @brief Make a sql request and get all transactions from database
+ *
+ * @param db A reference to the SQLite database
+ * @return vector of Transactions or string representation of them
+ */
+Transactions GetAllTransactions(const sql::Database &db);
+Table GetAllTransactionsTable(sql::Database &db);
+
 } // namespace Plutus

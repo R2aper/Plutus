@@ -68,4 +68,64 @@ void InsertTransaction(sql::Database &db, Transaction &tr) {
   tr.id = db.getLastInsertRowid();
 }
 
+Categories GetAllCategories(const sql::Database &db) {
+  Categories cts;
+  sql::Statement query(
+      db, "SELECT id, name, expected_amount, available_amount, spent_amount FROM categories");
+
+  while (query.executeStep()) {
+    Category ct = {query.getColumn(0), query.getColumn(1), query.getColumn(2), query.getColumn(3),
+                   query.getColumn(4)};
+    cts.push_back(ct);
+  }
+
+  return cts;
+}
+
+Table GetAllCategoriesTable(const sql::Database &db) {
+  Table table;
+  sql::Statement query(
+      db, "SELECT id, name, expected_amount, available_amount, spent_amount FROM categories");
+
+  table.push_back({"Id", "Name", "Expected", "Available", "Spent"});
+
+  while (query.executeStep()) {
+    Category ct = {query.getColumn(0), query.getColumn(1), query.getColumn(2), query.getColumn(3),
+                   query.getColumn(4)};
+    table.push_back(ct.ToColumn());
+  }
+
+  return table;
+}
+
+Transactions GetAllTransactions(const sql::Database &db) {
+  Transactions trs;
+  sql::Statement query(db, "SELECT t.id, t.date, t.note, t.amount, t.category_id, c.name "
+                           "FROM transactions t JOIN categories c ON t.category_id = c.id");
+
+  while (query.executeStep()) {
+    Transaction tr = {query.getColumn(0), query.getColumn(1), query.getColumn(2),
+                      query.getColumn(3), query.getColumn(4), query.getColumn(5)};
+    trs.push_back(tr);
+  }
+
+  return trs;
+}
+
+Table GetAllTransactionsTable(sql::Database &db) {
+  Table table;
+  sql::Statement query(db, "SELECT t.id, t.date, t.note, t.amount, t.category_id, c.name "
+                           "FROM transactions t JOIN categories c ON t.category_id = c.id");
+
+  table.push_back({"Id", "Date", "Note", "Amount", "Name"});
+
+  while (query.executeStep()) {
+    Transaction tr = {query.getColumn(0), query.getColumn(1), query.getColumn(2),
+                      query.getColumn(3), query.getColumn(4), query.getColumn(5)};
+    table.push_back(tr.ToColumn());
+  }
+
+  return table;
+}
+
 } // namespace Plutus
