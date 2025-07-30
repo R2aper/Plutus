@@ -2,6 +2,7 @@
 #include <filesystem>
 
 #include "category.hpp"
+#include "mbudget.hpp"
 #include "sql.hpp"
 #include "transaction.hpp"
 #include "utils.hpp"
@@ -28,19 +29,17 @@ sql::Database CreateDatabase(const std::string &name) {
           "category_id INTEGER NOT NULL, "
           "FOREIGN KEY (category_id) REFERENCES categories(id))");
 
-  /*
-// Trigger after create in transactions
-// Update category fields
-db.exec("CREATE TRIGGER IF NOT EXISTS update_category_amounts "
-  "AFTER INSERT ON transactions "
-  "BEGIN "
-  "    UPDATE categories "
-  "    SET spent_amount = spent_amount + (CASE WHEN NEW.amount < 0 THEN -NEW.amount ELSE "
-  "0 END), "
-  "        available_amount = available_amount + NEW.amount "
-  "    WHERE id = NEW.category_id; "
-  "END;");
-*/
+  // Create table for monthly budget
+  db.exec("CREATE TABLE IF NOT EXISTS monthly_budgets ("
+          "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+          "category_id INTEGER NOT NULL, "
+          "year INTEGER NOT NULL, "
+          "month INTEGER NOT NULL, "
+          "expected_amount REAL NOT NULL, "
+          "available_amount REAL NOT NULL, "
+          "spent_amount REAL NOT NULL, "
+          "FOREIGN KEY (category_id) REFERENCES categories(id), "
+          "UNIQUE(category_id, year, month))");
 
   return db;
 }
@@ -65,6 +64,22 @@ void InsertTransaction(sql::Database &db, Transaction &tr) {
   insert.exec();
 
   tr.id = db.getLastInsertRowid();
+}
+
+void InsertMonthlyBudget(sql::Database &db, MonthlyBudget &mb) {
+  sql::Statement insert(
+      db, "Insert INTO monthly_budgets (category_id, year, month, "
+          "expected_amount, available_amount, spent_amount) VALUES (?, ?, ?, ?, ?, ?)");
+
+  insert.bind(1, mb.category.id);
+  insert.bind(2, mb.year);
+  insert.bind(3, mb.month);
+  insert.bind(4, mb.expected_amount);
+  insert.bind(5, mb.available_amount);
+  insert.bind(6, mb.spent_amount);
+  insert.exec();
+
+  mb.id = db.getLastInsertRowid();
 }
 
 Categories GetAllCategories(const sql::Database &db) {
@@ -139,6 +154,58 @@ Table GetAllTransactionsTable(sql::Database &db) {
   }
 
   return table;
+}
+
+std::vector<MonthlyBudget> GetAllMonthlyBudget(const sql::Database &db) {
+  std::vector<MonthlyBudget> mbs;
+
+  sql::Statement query(db, "SELECT cmb.id, c.id, c.name, cmb.year, cmb.month, cmb.expected_amount, "
+                           "cmb.available_amount, cmb.spent_amount "
+                           "FROM monthly_budgets cmb "
+                           "JOIN categories c ON cmb.category_id = c.id");
+
+  while (query.executeStep()) {
+    MonthlyBudget mb;
+    mb.id = query.getColumn(0);
+    mb.category.id = query.getColumn(1);
+    mb.category.name = query.getColumn(2).getString();
+    mb.year = query.getColumn(3);
+    mb.month = query.getColumn(4);
+    mb.expected_amount = query.getColumn(5);
+    mb.available_amount = query.getColumn(6);
+    mb.spent_amount = query.getColumn(7);
+
+    mbs.push_back(mb);
+  }
+
+  return mbs;
+}
+
+Table GetAllMonthlyBudgetTable(const sql::Database &db) {
+  Table mbs;
+
+  sql::Statement query(db, "SELECT cmb.id, c.id, c.name, cmb.year, cmb.month, cmb.expected_amount, "
+                           "cmb.available_amount, cmb.spent_amount "
+                           "FROM monthly_budgets cmb "
+                           "JOIN categories c ON cmb.category_id = c.id");
+
+  mbs.push_back({"Id", "Category name", "Period", "Expected", "Available", "Spent"});
+
+  while (query.executeStep()) {
+    MonthlyBudget mb;
+    mb.id = query.getColumn(0);
+    mb.category.id = query.getColumn(1);
+    mb.category.name = query.getColumn(2).getString();
+    mb.year = query.getColumn(3);
+    mb.month = query.getColumn(4);
+    mb.expected_amount = query.getColumn(5);
+    mb.available_amount = query.getColumn(6);
+    mb.spent_amount = query.getColumn(7);
+
+    mbs.push_back(mb.ToColumn());
+  }
+
+  return mbs;
 }
 
 } // namespace Plutus

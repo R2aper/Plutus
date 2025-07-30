@@ -1,8 +1,10 @@
 #pragma once
+
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <string>
 
 #include "category.hpp"
+#include "mbudget.hpp"
 #include "transaction.hpp"
 #include "utils.hpp"
 
@@ -37,6 +39,8 @@ void InsertCategory(sql::Database &db, Category &ct);
  */
 void InsertTransaction(sql::Database &db, Transaction &tr);
 
+void InsertMonthlyBudget(sql::Database &db, MonthlyBudget &mb);
+
 /**
  * @brief Make a sql request and get all categories from database
  *
@@ -54,5 +58,9 @@ Table GetAllCategoriesTable(const sql::Database &db);
  */
 Transactions GetAllTransactions(const sql::Database &db);
 Table GetAllTransactionsTable(sql::Database &db);
+
+std::vector<MonthlyBudget> GetAllMonthlyBudget(const sql::Database &db);
+
+Table GetAllMonthlyBudgetTable(const sql::Database &db);
 
 } // namespace Plutus

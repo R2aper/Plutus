@@ -12,7 +12,8 @@ src = files(
   'src/sql.cpp',
   'src/utils.cpp',
   'src/category.cpp',
-  'src/transaction.cpp'
+  'src/transaction.cpp',
+  'src/mbudget.cpp'
 )
 
 incl = include_directories('include')

@@ -1,3 +1,4 @@
+#include "mbudget.hpp"
 #include "sql.hpp"
 #include "utils.hpp"
 #include <iostream>
@@ -22,9 +23,11 @@ int main(void) {
 
     Table table = GetAllCategoriesTable(db);
     Table table2 = GetAllTransactionsTable(db);
+    Table table3 = GetAllMonthlyBudgetTable(db);
 
     print_table(table);
     print_table(table2);
+    print_table(table3);
 
   } catch (const std::exception &e) {
     std::cerr << "Fatal!: " << e.what() << std::endl;
