@@ -1,7 +1,9 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <filesystem>
 
+#include "category.hpp"
 #include "sql.hpp"
+#include "transaction.hpp"
 #include "utils.hpp"
 
 namespace sql = SQLite;
@@ -29,6 +31,8 @@ sql::Database CreateDatabase(const std::string &name) {
           "category_id INTEGER NOT NULL, "
           "FOREIGN KEY (category_id) REFERENCES categories(id))");
 
+  // Trigger after create in transactions
+  // Update category fields
   db.exec("CREATE TRIGGER IF NOT EXISTS update_category_amounts "
           "AFTER INSERT ON transactions "
           "BEGIN "

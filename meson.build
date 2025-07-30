@@ -10,7 +10,9 @@ args = ['-std=c++17',
 src = files(
   'src/main.cpp',
   'src/sql.cpp',
-  'src/utils.cpp'
+  'src/utils.cpp',
+  'src/category.cpp',
+  'src/transaction.cpp'
 )
 
 incl = include_directories('include')

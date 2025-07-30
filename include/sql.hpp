@@ -2,6 +2,8 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <string>
 
+#include "category.hpp"
+#include "transaction.hpp"
 #include "utils.hpp"
 
 namespace sql = SQLite;
