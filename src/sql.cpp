@@ -17,10 +17,7 @@ sql::Database CreateDatabase(const std::string &name) {
   // Create table for categories
   db.exec("CREATE TABLE IF NOT EXISTS categories ("
           "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-          "name TEXT NOT NULL, "
-          "expected_amount REAL NOT NULL, "
-          "available_amount REAL NOT NULL, "
-          "spent_amount REAL NOT NULL)");
+          "name TEXT NOT NULL)");
 
   // Create table for transactions
   db.exec("CREATE TABLE IF NOT EXISTS transactions ("
@@ -31,29 +28,27 @@ sql::Database CreateDatabase(const std::string &name) {
           "category_id INTEGER NOT NULL, "
           "FOREIGN KEY (category_id) REFERENCES categories(id))");
 
-  // Trigger after create in transactions
-  // Update category fields
-  db.exec("CREATE TRIGGER IF NOT EXISTS update_category_amounts "
-          "AFTER INSERT ON transactions "
-          "BEGIN "
-          "    UPDATE categories "
-          "    SET spent_amount = spent_amount + (CASE WHEN NEW.amount < 0 THEN -NEW.amount ELSE "
-          "0 END), "
-          "        available_amount = available_amount + NEW.amount "
-          "    WHERE id = NEW.category_id; "
-          "END;");
+  /*
+// Trigger after create in transactions
+// Update category fields
+db.exec("CREATE TRIGGER IF NOT EXISTS update_category_amounts "
+  "AFTER INSERT ON transactions "
+  "BEGIN "
+  "    UPDATE categories "
+  "    SET spent_amount = spent_amount + (CASE WHEN NEW.amount < 0 THEN -NEW.amount ELSE "
+  "0 END), "
+  "        available_amount = available_amount + NEW.amount "
+  "    WHERE id = NEW.category_id; "
+  "END;");
+*/
 
   return db;
 }
 
 void InsertCategory(sql::Database &db, Category &ct) {
-  sql::Statement insert(db, "INSERT INTO categories (name, expected_amount, available_amount, "
-                            "spent_amount) VALUES (?, ?, ?, ?)");
+  sql::Statement insert(db, "INSERT INTO categories (name) VALUES (?)");
 
   insert.bind(1, ct.name);
-  insert.bind(2, ct.expected_amount);
-  insert.bind(3, ct.available_amount);
-  insert.bind(4, ct.spent_amount);
   insert.exec();
 
   ct.id = db.getLastInsertRowid();
@@ -74,16 +69,12 @@ void InsertTransaction(sql::Database &db, Transaction &tr) {
 
 Categories GetAllCategories(const sql::Database &db) {
   Categories cts;
-  sql::Statement query(
-      db, "SELECT id, name, expected_amount, available_amount, spent_amount FROM categories");
+  sql::Statement query(db, "SELECT id, name FROM categories");
 
   while (query.executeStep()) {
     Category ct;
     ct.id = query.getColumn(0);
     ct.name = query.getColumn(1).getString();
-    ct.expected_amount = query.getColumn(2);
-    ct.available_amount = query.getColumn(3);
-    ct.spent_amount = query.getColumn(4);
 
     cts.push_back(ct);
   }
@@ -93,18 +84,14 @@ Categories GetAllCategories(const sql::Database &db) {
 
 Table GetAllCategoriesTable(const sql::Database &db) {
   Table table;
-  sql::Statement query(
-      db, "SELECT id, name, expected_amount, available_amount, spent_amount FROM categories");
+  sql::Statement query(db, "SELECT id, name FROM categories");
 
-  table.push_back({"Id", "Name", "Expected", "Available", "Spent"});
+  table.push_back({"Id", "Name"});
 
   while (query.executeStep()) {
     Category ct;
     ct.id = query.getColumn(0);
     ct.name = query.getColumn(1).getString();
-    ct.expected_amount = query.getColumn(2);
-    ct.available_amount = query.getColumn(3);
-    ct.spent_amount = query.getColumn(4);
 
     table.push_back(ct.ToColumn());
   }

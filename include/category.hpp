@@ -8,9 +8,6 @@ namespace Plutus {
 struct Category {
   int64 id;
   std::string name;
-  double expected_amount;
-  double available_amount;
-  double spent_amount;
 
   /// @brief return string representation of Category
   std::vector<std::string> ToColumn() const;
