@@ -66,7 +66,7 @@ void InsertTransaction(sql::Database &db, Transaction &tr) {
   insert.bind(1, tr.date);
   insert.bind(2, tr.note);
   insert.bind(3, tr.amount);
-  insert.bind(4, tr.category_id);
+  insert.bind(4, tr.category.id);
   insert.exec();
 
   tr.id = db.getLastInsertRowid();
@@ -78,8 +78,13 @@ Categories GetAllCategories(const sql::Database &db) {
       db, "SELECT id, name, expected_amount, available_amount, spent_amount FROM categories");
 
   while (query.executeStep()) {
-    Category ct = {query.getColumn(0), query.getColumn(1), query.getColumn(2), query.getColumn(3),
-                   query.getColumn(4)};
+    Category ct;
+    ct.id = query.getColumn(0);
+    ct.name = query.getColumn(1).getString();
+    ct.expected_amount = query.getColumn(2);
+    ct.available_amount = query.getColumn(3);
+    ct.spent_amount = query.getColumn(4);
+
     cts.push_back(ct);
   }
 
@@ -94,8 +99,13 @@ Table GetAllCategoriesTable(const sql::Database &db) {
   table.push_back({"Id", "Name", "Expected", "Available", "Spent"});
 
   while (query.executeStep()) {
-    Category ct = {query.getColumn(0), query.getColumn(1), query.getColumn(2), query.getColumn(3),
-                   query.getColumn(4)};
+    Category ct;
+    ct.id = query.getColumn(0);
+    ct.name = query.getColumn(1).getString();
+    ct.expected_amount = query.getColumn(2);
+    ct.available_amount = query.getColumn(3);
+    ct.spent_amount = query.getColumn(4);
+
     table.push_back(ct.ToColumn());
   }
 
@@ -108,8 +118,14 @@ Transactions GetAllTransactions(const sql::Database &db) {
                            "FROM transactions t JOIN categories c ON t.category_id = c.id");
 
   while (query.executeStep()) {
-    Transaction tr = {query.getColumn(0), query.getColumn(1), query.getColumn(2),
-                      query.getColumn(3), query.getColumn(4), query.getColumn(5)};
+    Transaction tr;
+    tr.id = query.getColumn(0);
+    tr.date = query.getColumn(1).getString();
+    tr.note = query.getColumn(2).getString();
+    tr.amount = query.getColumn(3);
+    tr.category.id = query.getColumn(4);
+    tr.category.name = query.getColumn(5).getString();
+
     trs.push_back(tr);
   }
 
@@ -124,8 +140,14 @@ Table GetAllTransactionsTable(sql::Database &db) {
   table.push_back({"Id", "Date", "Note", "Amount", "Name"});
 
   while (query.executeStep()) {
-    Transaction tr = {query.getColumn(0), query.getColumn(1), query.getColumn(2),
-                      query.getColumn(3), query.getColumn(4), query.getColumn(5)};
+    Transaction tr;
+    tr.id = query.getColumn(0);
+    tr.date = query.getColumn(1).getString();
+    tr.note = query.getColumn(2).getString();
+    tr.amount = query.getColumn(3);
+    tr.category.id = query.getColumn(4);
+    tr.category.name = query.getColumn(5).getString();
+
     table.push_back(tr.ToColumn());
   }
 

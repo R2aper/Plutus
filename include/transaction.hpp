@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "category.hpp"
 #include "utils.hpp"
 
 namespace Plutus {
@@ -14,8 +15,7 @@ struct Transaction {
   std::string date;
   std::string note;
   double amount;
-  int64 category_id;
-  std::string category;
+  Category category;
 
   /// @brief return string representation of Transaction
   std::vector<std::string> ToColumn() const;
