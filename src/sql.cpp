@@ -1,13 +1,11 @@
-#include <SQLiteCpp/SQLiteCpp.h>
+#include "sql.hpp"
+
 #include <filesystem>
 
-#include "category.hpp"
 #include "mbudget.hpp"
-#include "sql.hpp"
 #include "transaction.hpp"
 #include "utils.hpp"
 
-namespace sql = SQLite;
 namespace fs = std::filesystem;
 
 namespace Plutus {
@@ -44,15 +42,6 @@ sql::Database CreateDatabase(const std::string &name) {
   return db;
 }
 
-void InsertCategory(sql::Database &db, Category &ct) {
-  sql::Statement insert(db, "INSERT INTO categories (name) VALUES (?)");
-
-  insert.bind(1, ct.name);
-  insert.exec();
-
-  ct.id = db.getLastInsertRowid();
-}
-
 void InsertTransaction(sql::Database &db, Transaction &tr) {
   sql::Statement insert(
       db, "INSERT INTO transactions (date, note, amount, category_id) VALUES (?, ?, ?, ?)");
@@ -80,38 +69,6 @@ void InsertMonthlyBudget(sql::Database &db, MonthlyBudget &mb) {
   insert.exec();
 
   mb.id = db.getLastInsertRowid();
-}
-
-Categories GetAllCategories(const sql::Database &db) {
-  Categories cts;
-  sql::Statement query(db, "SELECT id, name FROM categories");
-
-  while (query.executeStep()) {
-    Category ct;
-    ct.id = query.getColumn(0);
-    ct.name = query.getColumn(1).getString();
-
-    cts.push_back(ct);
-  }
-
-  return cts;
-}
-
-Table GetAllCategoriesTable(const sql::Database &db) {
-  Table table;
-  sql::Statement query(db, "SELECT id, name FROM categories");
-
-  table.push_back({"Id", "Name"});
-
-  while (query.executeStep()) {
-    Category ct;
-    ct.id = query.getColumn(0);
-    ct.name = query.getColumn(1).getString();
-
-    table.push_back(ct.ToColumn());
-  }
-
-  return table;
 }
 
 Transactions GetAllTransactions(const sql::Database &db) {

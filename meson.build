@@ -7,13 +7,15 @@ args = ['-std=c++17',
   '-Wpedantic'
 ]
 
+# TODO: rewrite
 src = files(
   'src/main.cpp',
   'src/sql.cpp',
   'src/utils.cpp',
   'src/category.cpp',
   'src/transaction.cpp',
-  'src/mbudget.cpp'
+  'src/mbudget.cpp',
+  'src/controllers/category.cpp'
 )
 
 incl = include_directories('include')

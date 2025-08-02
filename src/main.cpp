@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include "controllers/category.hpp"
+
 using namespace Plutus;
 
 void usage();
@@ -19,15 +21,22 @@ void print_table(const Table &table) {
 
 int main(void) {
   try {
-    auto db = CreateDatabase("financy.db");
+    std::shared_ptr<sql::Database> db =
+        std::make_shared<sql::Database>(CreateDatabase("financy.db"));
 
-    Table table = GetAllCategoriesTable(db);
-    Table table2 = GetAllTransactionsTable(db);
-    Table table3 = GetAllMonthlyBudgetTable(db);
+    std::shared_ptr<Table> CategoriesTable = std::make_shared<Table>();
 
-    print_table(table);
-    print_table(table2);
-    print_table(table3);
+    CategoryController cc(CategoriesTable, db);
+
+    std::cout << "Categories:" << '\n';
+    print_table(*CategoriesTable);
+
+    Category ct;
+    ct.name = "Grocery";
+    cc.Insert(ct);
+
+    std::cout << "Categories:" << '\n';
+    print_table(*CategoriesTable);
 
   } catch (const std::exception &e) {
     std::cerr << "Fatal!: " << e.what() << std::endl;
