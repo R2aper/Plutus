@@ -33,9 +33,9 @@ sql::Database CreateDatabase(const std::string &name) {
           "category_id INTEGER NOT NULL, "
           "year INTEGER NOT NULL, "
           "month INTEGER NOT NULL, "
-          "expected_amount REAL NOT NULL, "
-          "available_amount REAL NOT NULL, "
-          "spent_amount REAL NOT NULL, "
+          "budget REAL NOT NULL, "
+          "actual REAL NOT NULL, "
+          "difference REAL NOT NULL, "
           "FOREIGN KEY (category_id) REFERENCES categories(id), "
           "UNIQUE(category_id, year, month))");
 

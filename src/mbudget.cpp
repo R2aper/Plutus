@@ -4,15 +4,15 @@ namespace Plutus {
 
 // TODO:
 MonthlyBudget::MonthlyBudget()
-    : id(0), category({1, "untitled"}), year(2025), month(7), expected_amount(0),
-      available_amount(0), spent_amount(0.0) {}
+    : id(0), category({1, "untitled"}), year(2025), month(7), budget_amount(0), actual_amount(0.0),
+      difference_amount(0) {}
 
 // WTF is this thing so big
 MonthlyBudget::MonthlyBudget(int64 _id, const Category &ct, int _year, int _month,
-                             double _expected_amount, double _available_amount,
-                             double _spent_amount)
-    : id(_id), category(ct), year(_year), month(_month), expected_amount(_expected_amount),
-      available_amount(_available_amount), spent_amount(_spent_amount) {}
+                             double _budget_amount, double _actual_amount,
+                             double _difference_amount)
+    : id(_id), category(ct), year(_year), month(_month), budget_amount(_budget_amount),
+      actual_amount(_actual_amount), difference_amount(_difference_amount) {}
 
 std::vector<std::string> MonthlyBudget::ToColumn() const {
   std::vector<std::string> column;
@@ -21,9 +21,9 @@ std::vector<std::string> MonthlyBudget::ToColumn() const {
   // column.push_back(std::to_string(category.id));
   column.push_back(category.name);
   column.push_back(std::to_string(year) + "-" + std::to_string(month)); //!
-  column.push_back(std::to_string(expected_amount));
-  column.push_back(std::to_string(available_amount));
-  column.push_back(std::to_string(spent_amount));
+  column.push_back(std::to_string(budget_amount));
+  column.push_back(std::to_string(actual_amount));
+  column.push_back(std::to_string(difference_amount));
 
   return column;
 }
@@ -34,16 +34,16 @@ std::ostream &operator<<(std::ostream &os, const MonthlyBudget &mb) {
      // << "Category Id: " << mb.category.id << std::endl
      << "Category name: " << mb.category.name << std::endl
      << "Period:" << mb.year << "-" << mb.month << std::endl
-     << "Expected amount" << mb.expected_amount << std::endl
-     << "Available amount" << mb.available_amount << std::endl
-     << "Spent amount" << mb.spent_amount << std::endl;
+     << "Expected amount" << mb.budget_amount << std::endl
+     << "Available amount" << mb.actual_amount << std::endl
+     << "Spent amount" << mb.difference_amount << std::endl;
 
   return os;
 }
 
 std::istream &operator>>(std::istream &is, MonthlyBudget &mb) {
-  is >> mb.id >> mb.category.id >> mb.year >> mb.month >> mb.expected_amount >>
-      mb.available_amount >> mb.spent_amount;
+  is >> mb.id >> mb.category.id >> mb.year >> mb.month >> mb.budget_amount >> mb.actual_amount >>
+      mb.difference_amount;
 
   return is;
 }

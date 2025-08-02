@@ -10,6 +10,8 @@
 
 using namespace Plutus;
 
+//
+
 void usage();
 void version();
 
@@ -34,36 +36,28 @@ int main(void) {
     BudgetController bc(BudgetsTable, db);
     TransactionController tc(TransactionTable, db);
 
-    std::cout << "Categories:" << '\n';
-    print_table(*CategoriesTable);
-    std::cout << "Budgets:" << '\n';
-    print_table(*BudgetsTable);
-    std::cout << "Transactions:" << '\n';
-    print_table(*TransactionTable);
-
     Category ct;
-    ct.name = "Grocery";
+    ct.name = "Income";
     cc.Insert(ct);
 
-    bc.set_period(2025, 7);
     MonthlyBudget mb;
-    mb.category.id = ct.id;
-    mb.month = 7;
     mb.year = 2025;
-    mb.expected_amount = 500.0;
-    mb.spent_amount = 0.0;
-    mb.available_amount = mb.expected_amount - mb.spent_amount;
+    mb.month = 7;
+    mb.budget_amount = 5000.0;
+    mb.actual_amount = 6000.0;
+    mb.difference_amount = mb.budget_amount - mb.actual_amount;
+    mb.category = ct;
     bc.Insert(mb);
+    bc.set_period(2025, 7);
 
     Transaction tr;
-    tr.amount = 50.0;
+    tr.amount = -500.0;
     tr.category = ct;
-    tr.date = "2025-07-21";
+    tr.date = "2025-07-24";
     tr.note = "Bread";
-    tc.set_period(2025, 7);
-    tc.set_category_id(1);
     tc.Insert(tr);
-    tc.Update(tr.id, "2025-07-24", "Milk", 120.0, ct.id);
+    tc.set_period(2025, 7);
+    tc.set_category_id(ct.id);
 
     std::cout << "Categories:" << '\n';
     print_table(*CategoriesTable);

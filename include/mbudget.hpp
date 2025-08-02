@@ -10,14 +10,14 @@ struct MonthlyBudget {
   Category category;
   int year;
   int month;
-  double expected_amount;
-  double available_amount;
-  double spent_amount;
+  double budget_amount;
+  double actual_amount;
+  double difference_amount;
 
   MonthlyBudget();
 
-  MonthlyBudget(int64 _id, const Category &ct, int _year, int _month, double _expected_amount,
-                double _available_amount, double _spent_amount);
+  MonthlyBudget(int64 _id, const Category &ct, int _year, int _month_amount, double _budget_amount,
+                double _actual_amount, double _difference_amount);
 
   /// @brief return string representation of MonthlyBudget
   std::vector<std::string> ToColumn() const;
