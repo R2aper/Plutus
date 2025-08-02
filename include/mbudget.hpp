@@ -14,6 +14,11 @@ struct MonthlyBudget {
   double available_amount;
   double spent_amount;
 
+  MonthlyBudget();
+
+  MonthlyBudget(int64 _id, const Category &ct, int _year, int _month, double _expected_amount,
+                double _available_amount, double _spent_amount);
+
   /// @brief return string representation of MonthlyBudget
   std::vector<std::string> ToColumn() const;
 

@@ -2,6 +2,18 @@
 
 namespace Plutus {
 
+// TODO:
+MonthlyBudget::MonthlyBudget()
+    : id(0), category({1, "untitled"}), year(2025), month(7), expected_amount(0),
+      available_amount(0), spent_amount(0.0) {}
+
+// WTF is this thing so big
+MonthlyBudget::MonthlyBudget(int64 _id, const Category &ct, int _year, int _month,
+                             double _expected_amount, double _available_amount,
+                             double _spent_amount)
+    : id(_id), category(ct), year(_year), month(_month), expected_amount(_expected_amount),
+      available_amount(_available_amount), spent_amount(_spent_amount) {}
+
 std::vector<std::string> MonthlyBudget::ToColumn() const {
   std::vector<std::string> column;
 

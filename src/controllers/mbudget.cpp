@@ -7,7 +7,7 @@ namespace Plutus {
 
 BudgetController::BudgetController(std::shared_ptr<Table> table, std::shared_ptr<sql::Database> db)
     : AbstractController(table, db) {
-  set_period(2025, 8); // TODO: current time
+  set_period(2025, 7); // TODO: current time
   UpdateTable();
 }
 
@@ -69,15 +69,9 @@ void BudgetController::UpdateTable() {
   table->push_back({"Id", "Category name", "Period", "Expected", "Available", "Spent"});
 
   while (query.executeStep()) {
-    MonthlyBudget mb;
-    mb.id = query.getColumn(0);
-    mb.category.id = query.getColumn(1);
-    mb.category.name = query.getColumn(2).getString();
-    mb.year = query.getColumn(3);
-    mb.month = query.getColumn(4);
-    mb.expected_amount = query.getColumn(5);
-    mb.available_amount = query.getColumn(6);
-    mb.spent_amount = query.getColumn(7);
+    MonthlyBudget mb(query.getColumn(0), {query.getColumn(1), query.getColumn(2).getString()},
+                     query.getColumn(3), query.getColumn(4), query.getColumn(5), query.getColumn(6),
+                     query.getColumn(7));
 
     table->push_back(mb.ToColumn());
   }

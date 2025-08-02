@@ -9,6 +9,10 @@ struct Category {
   int64 id;
   std::string name;
 
+  Category();
+
+  Category(int64 _id, const std::string &_name);
+
   /// @brief return string representation of Category
   std::vector<std::string> ToColumn() const;
 
