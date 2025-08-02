@@ -26,8 +26,6 @@ sql::Database CreateDatabase(const std::string &name);
  */
 void InsertTransaction(sql::Database &db, Transaction &tr);
 
-void InsertMonthlyBudget(sql::Database &db, MonthlyBudget &mb);
-
 /**
  * @brief Make a sql request and get all transactions from database
  *
@@ -36,9 +34,5 @@ void InsertMonthlyBudget(sql::Database &db, MonthlyBudget &mb);
  */
 Transactions GetAllTransactions(const sql::Database &db);
 Table GetAllTransactionsTable(sql::Database &db);
-
-std::vector<MonthlyBudget> GetAllMonthlyBudget(const sql::Database &db);
-
-Table GetAllMonthlyBudgetTable(const sql::Database &db);
 
 } // namespace Plutus
