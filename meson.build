@@ -16,7 +16,8 @@ src = files(
   'src/transaction.cpp',
   'src/mbudget.cpp',
   'src/controllers/category.cpp',
-  'src/controllers/mbudget.cpp'
+  'src/controllers/mbudget.cpp',
+  'src/controllers/transaction.cpp'
 )
 
 incl = include_directories('include')

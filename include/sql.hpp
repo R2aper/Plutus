@@ -17,22 +17,4 @@ namespace Plutus {
  */
 sql::Database CreateDatabase(const std::string &name);
 
-/**
- * @brief Inserts a new transaction into the transactions table in the database.
- * @note tr.id replaces wiht inserted row id
- *
- * @param db A reference to the SQLite database where the transaction will be inserted.
- * @param tr A reference to the Transaction object containing the data to be inserted.
- */
-void InsertTransaction(sql::Database &db, Transaction &tr);
-
-/**
- * @brief Make a sql request and get all transactions from database
- *
- * @param db A reference to the SQLite database
- * @return vector of Transactions or string representation of them
- */
-Transactions GetAllTransactions(const sql::Database &db);
-Table GetAllTransactionsTable(sql::Database &db);
-
 } // namespace Plutus

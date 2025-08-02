@@ -1,0 +1,84 @@
+#include "controllers/transaction.hpp"
+
+#include "transaction.hpp"
+#include "utils.hpp"
+
+namespace Plutus {
+
+TransactionController::TransactionController(std::shared_ptr<Table> table,
+                                             std::shared_ptr<sql::Database> db)
+    : AbstractController(table, db) {
+  set_period(2025, 8); // TODO: current time
+  set_category_id(1);
+
+  UpdateTable();
+}
+
+void TransactionController::set_period(int _year, int _month) noexcept {
+  year = _year;
+  month = _month;
+}
+
+void TransactionController::set_category_id(int64 id) noexcept { category_id = id; }
+
+void TransactionController::Insert(Transaction &tr) {
+  sql::Statement insert(
+      *db, "INSERT INTO transactions (date, note, amount, category_id) VALUES (?, ?, ?, ?)");
+
+  insert.bind(1, tr.date);
+  insert.bind(2, tr.note);
+  insert.bind(3, tr.amount);
+  insert.bind(4, tr.category.id);
+  insert.exec();
+
+  tr.id = db->getLastInsertRowid();
+
+  UpdateTable();
+}
+
+void TransactionController::Remove(int64 id) {
+  sql::Statement remove(*db, "DELETE FROM transactions WHERE id = ?");
+
+  remove.bind(1, id);
+  remove.exec();
+
+  UpdateTable();
+}
+
+void TransactionController::Update(int64 id, const std::string &new_date,
+                                   const std::string &new_note, double new_amount,
+                                   int64 new_category_id) {
+  sql::Statement update(
+      *db, "UPDATE transactions SET date = ?, note = ?, amount = ?, category_id = ? WHERE id = ?");
+
+  update.bind(1, new_date);
+  update.bind(2, new_note);
+  update.bind(3, new_amount);
+  update.bind(4, new_category_id);
+  update.bind(5, id);
+  update.exec();
+
+  UpdateTable();
+}
+
+void TransactionController::UpdateTable() {
+  sql::Statement query(*db, "SELECT t.id, t.date, t.note, t.amount, t.category_id, c.name "
+                            "FROM transactions t JOIN categories c ON t.category_id = c.id");
+
+  table->clear();
+  table->push_back({"Id", "Date", "Note", "Amount", "Category name"});
+
+  while (query.executeStep()) {
+    Transaction tr;
+    tr.id = query.getColumn(0);
+    tr.date = query.getColumn(1).getString();
+    tr.note = query.getColumn(2).getString();
+    tr.amount = query.getColumn(3);
+    tr.category.id = query.getColumn(4);
+    tr.category.name = query.getColumn(5).getString();
+
+    table->push_back(tr.ToColumn());
+  }
+}
+
+} // namespace Plutus
