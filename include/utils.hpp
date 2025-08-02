@@ -1,8 +1,10 @@
 #pragma once
 
-#include <iostream>
+#include <SQLiteCpp/SQLiteCpp.h>
 #include <string>
 #include <vector>
+
+namespace sql = SQLite;
 
 #ifdef _WIN32
 #define PATH fs::path(std::string("homedir") + std::string("\\Documents\\ft\\"))
