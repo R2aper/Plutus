@@ -13,7 +13,7 @@ public:
   explicit BudgetController(std::shared_ptr<Table> table, std::shared_ptr<sql::Database> db);
 
   /// @brief Insert Budget into 'monthly_budgets' table of database
-  /// @param ct New budget
+  /// @param mb New budget
   void Insert(MonthlyBudget &mb);
 
   /// @brief Remove budget from database by id

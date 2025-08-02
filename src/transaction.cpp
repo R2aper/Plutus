@@ -2,6 +2,15 @@
 
 namespace Plutus {
 
+Transaction::Transaction()
+    : id(0), date("2025-07-21"), note(""), amount(0), type(INCOME), category({1, "untitled"}) {}
+
+Transaction::Transaction(int64 _id, const std::string &_date, const std::string &_note,
+                         double _amount, const Category &ct)
+    : id(_id), date(_date), note(_note), amount(_amount), category(ct) {
+  type = (amount < 0) ? EXPENSE : INCOME;
+}
+
 std::vector<std::string> Transaction::ToColumn() const {
   std::vector<std::string> column;
 
