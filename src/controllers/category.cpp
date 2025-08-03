@@ -50,9 +50,7 @@ void CategoryController::UpdateTable() {
   table->push_back({"Id", "Name"});
 
   while (query.executeStep()) {
-    Category ct;
-    ct.id = query.getColumn(0);
-    ct.name = query.getColumn(1).getString();
+    Category ct(query.getColumn(0), query.getColumn(1).getString());
 
     table->push_back(ct.ToColumn());
   }

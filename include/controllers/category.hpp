@@ -26,7 +26,6 @@ public:
   /// @param new_name New name of Category
   void Update(int64 id, const std::string &new_name);
 
-private:
   /// @brief Fetch table with database
   void UpdateTable() override;
 };

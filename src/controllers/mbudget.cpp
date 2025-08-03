@@ -7,27 +7,28 @@ namespace Plutus {
 
 BudgetController::BudgetController(std::shared_ptr<Table> table, std::shared_ptr<sql::Database> db)
     : AbstractController(table, db) {
-  set_period(2025, 8); // TODO: current time
+  set_period(2025, 7); // TODO: current time
+
   UpdateTable();
 }
 
 void BudgetController::set_period(int _year, int _month) noexcept {
   year = _year;
   month = _month;
+
   UpdateTable();
 }
 
 void BudgetController::Insert(MonthlyBudget &mb) {
-  sql::Statement insert(
-      *db, "INSERT INTO monthly_budgets (category_id, year, month, "
-           "expected_amount, available_amount, spent_amount) VALUES (?, ?, ?, ?, ?, ?)");
+  sql::Statement insert(*db, "INSERT INTO monthly_budgets (category_id, year, month, "
+                             "budget, difference, actual) VALUES (?, ?, ?, ?, ?, ?)");
 
   insert.bind(1, mb.category.id);
   insert.bind(2, mb.year);
   insert.bind(3, mb.month);
-  insert.bind(4, mb.expected_amount);
-  insert.bind(5, mb.available_amount);
-  insert.bind(6, mb.spent_amount);
+  insert.bind(4, mb.budget_amount);
+  insert.bind(5, mb.difference_amount);
+  insert.bind(6, mb.actual_amount);
   insert.exec();
 
   mb.id = db->getLastInsertRowid();
@@ -44,10 +45,10 @@ void BudgetController::Remove(int64 id) {
   UpdateTable();
 }
 
-void BudgetController::Update(int64 id, double new_expected_amount) {
-  sql::Statement update(*db, "UPDATE  monthly_budgets SET expected_amount = ? WHERE id = ?");
+void BudgetController::Update(int64 id, double new_budget) {
+  sql::Statement update(*db, "UPDATE  monthly_budgets SET budget = ? WHERE id = ?");
 
-  update.bind(1, new_expected_amount);
+  update.bind(1, new_budget);
   update.bind(2, id);
   update.exec();
 
@@ -55,29 +56,22 @@ void BudgetController::Update(int64 id, double new_expected_amount) {
 }
 
 void BudgetController::UpdateTable() {
-  sql::Statement query(*db,
-                       "SELECT cmb.id, c.id, c.name, cmb.year, cmb.month, cmb.expected_amount, "
-                       "cmb.available_amount, cmb.spent_amount "
-                       "FROM monthly_budgets AS cmb "
-                       "JOIN categories AS c ON cmb.category_id = c.id "
-                       " WHERE cmb.year = ? AND cmb.month = ?");
+  sql::Statement query(*db, "SELECT cmb.id, c.id, c.name, cmb.year, cmb.month, cmb.budget, "
+                            "cmb.actual, cmb.difference "
+                            "FROM monthly_budgets AS cmb "
+                            "JOIN categories AS c ON cmb.category_id = c.id "
+                            " WHERE cmb.year = ? AND cmb.month = ?");
 
   query.bind(1, year);
   query.bind(2, month);
 
   table->clear();
-  table->push_back({"Id", "Category name", "Period", "Expected", "Available", "Spent"});
+  table->push_back({"Id", "Category name", "Period", "Budget", "Actual", "Difference"});
 
   while (query.executeStep()) {
-    MonthlyBudget mb;
-    mb.id = query.getColumn(0);
-    mb.category.id = query.getColumn(1);
-    mb.category.name = query.getColumn(2).getString();
-    mb.year = query.getColumn(3);
-    mb.month = query.getColumn(4);
-    mb.expected_amount = query.getColumn(5);
-    mb.available_amount = query.getColumn(6);
-    mb.spent_amount = query.getColumn(7);
+    MonthlyBudget mb(query.getColumn(0), {query.getColumn(1), query.getColumn(2).getString()},
+                     query.getColumn(3), query.getColumn(4), query.getColumn(5), query.getColumn(6),
+                     query.getColumn(7));
 
     table->push_back(mb.ToColumn());
   }

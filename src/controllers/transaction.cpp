@@ -21,6 +21,7 @@ void TransactionController::set_period(int _year, int _month) noexcept {
 
 void TransactionController::set_category_id(int64 id) noexcept { category_id = id; }
 
+// TODO: add category by name
 void TransactionController::Insert(Transaction &tr) {
   sql::Statement insert(
       *db, "INSERT INTO transactions (date, note, amount, category_id) VALUES (?, ?, ?, ?)");
@@ -69,13 +70,9 @@ void TransactionController::UpdateTable() {
   table->push_back({"Id", "Date", "Note", "Amount", "Category name"});
 
   while (query.executeStep()) {
-    Transaction tr;
-    tr.id = query.getColumn(0);
-    tr.date = query.getColumn(1).getString();
-    tr.note = query.getColumn(2).getString();
-    tr.amount = query.getColumn(3);
-    tr.category.id = query.getColumn(4);
-    tr.category.name = query.getColumn(5).getString();
+    Transaction tr(query.getColumn(0), query.getColumn(1).getString(),
+                   query.getColumn(2).getString(), query.getColumn(3),
+                   {query.getColumn(4), query.getColumn(5).getString()});
 
     table->push_back(tr.ToColumn());
   }

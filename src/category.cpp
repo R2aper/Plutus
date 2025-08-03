@@ -2,6 +2,10 @@
 
 namespace Plutus {
 
+Category::Category() : id(0), name("") {}
+
+Category::Category(int64 _id, const std::string &_name) : id(_id), name(_name) {}
+
 std::vector<std::string> Category::ToColumn() const {
   std::vector<std::string> column;
 
