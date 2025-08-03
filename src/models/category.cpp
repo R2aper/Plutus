@@ -1,4 +1,4 @@
-#include "category.hpp"
+#include "models/category.hpp"
 
 namespace Plutus {
 

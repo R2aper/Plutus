@@ -1,4 +1,4 @@
-#include "mbudget.hpp"
+#include "models/mbudget.hpp"
 #include "sql.hpp"
 #include "utils.hpp"
 #include <iostream>
@@ -10,7 +10,8 @@
 
 using namespace Plutus;
 
-//
+// trigger update_budget
+// Проверка на валидность категорий и бюджета
 
 void usage();
 void version();
@@ -37,24 +38,14 @@ int main(void) {
     TransactionController tc(TransactionTable, db);
 
     Category ct;
-    ct.name = "Income";
+    ct.name = "Grocery";
     cc.Insert(ct);
 
-    MonthlyBudget mb;
-    mb.year = 2025;
-    mb.month = 7;
-    mb.budget_amount = 5000.0;
-    mb.actual_amount = 6000.0;
-    mb.difference_amount = mb.budget_amount - mb.actual_amount;
-    mb.category = ct;
+    MonthlyBudget mb(0, ct, 2025, 7, 5000.0, 0, 5000.0);
     bc.Insert(mb);
     bc.set_period(2025, 7);
 
-    Transaction tr;
-    tr.amount = -500.0;
-    tr.category = ct;
-    tr.date = "2025-07-24";
-    tr.note = "Bread";
+    Transaction tr(0, "2025-07-24", "Bread", -500.0, ct);
     tc.Insert(tr);
     tc.set_period(2025, 7);
     tc.set_category_id(ct.id);
@@ -65,6 +56,26 @@ int main(void) {
     print_table(*BudgetsTable);
     std::cout << "Transactions:" << '\n';
     print_table(*TransactionTable);
+    std::cout << std::endl;
+
+    Category ct2(0, "Income");
+    cc.Insert(ct2);
+
+    MonthlyBudget mb2(0, ct2, 2025, 7, 10000.0, 0, 10000.0);
+    bc.Insert(mb2);
+
+    Transaction tr2(0, "2025-07-01", "Salary", 5000.0, ct2);
+    tc.Insert(tr2);
+    tc.set_category_id(ct2.id);
+    bc.UpdateTable();
+
+    std::cout << "Categories:" << '\n';
+    print_table(*CategoriesTable);
+    std::cout << "Budgets:" << '\n';
+    print_table(*BudgetsTable);
+    std::cout << "Transactions:" << '\n';
+    print_table(*TransactionTable);
+    std::cout << std::endl;
 
   } catch (const std::exception &e) {
     std::cerr << "Fatal!: " << e.what() << std::endl;

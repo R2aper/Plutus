@@ -1,7 +1,7 @@
 #pragma once
 
 #include "controllers/abstract.hpp"
-#include "mbudget.hpp"
+#include "models/mbudget.hpp"
 #include "utils.hpp"
 
 namespace Plutus {

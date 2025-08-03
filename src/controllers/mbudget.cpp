@@ -1,5 +1,5 @@
 #include "controllers/mbudget.hpp"
-#include "mbudget.hpp"
+#include "models/mbudget.hpp"
 
 #include "utils.hpp"
 
@@ -12,7 +12,7 @@ BudgetController::BudgetController(std::shared_ptr<Table> table, std::shared_ptr
   UpdateTable();
 }
 
-void BudgetController::set_period(int _year, int _month) noexcept {
+void BudgetController::set_period(int _year, int _month) {
   year = _year;
   month = _month;
 
@@ -21,14 +21,14 @@ void BudgetController::set_period(int _year, int _month) noexcept {
 
 void BudgetController::Insert(MonthlyBudget &mb) {
   sql::Statement insert(*db, "INSERT INTO monthly_budgets (category_id, year, month, "
-                             "budget, difference, actual) VALUES (?, ?, ?, ?, ?, ?)");
+                             "budget, actual, difference) VALUES (?, ?, ?, ?, ?, ?)");
 
   insert.bind(1, mb.category.id);
   insert.bind(2, mb.year);
   insert.bind(3, mb.month);
   insert.bind(4, mb.budget_amount);
-  insert.bind(5, mb.difference_amount);
-  insert.bind(6, mb.actual_amount);
+  insert.bind(5, mb.actual_amount);
+  insert.bind(6, mb.difference_amount);
   insert.exec();
 
   mb.id = db->getLastInsertRowid();

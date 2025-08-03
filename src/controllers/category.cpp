@@ -1,6 +1,6 @@
 #include "controllers/category.hpp"
 
-#include "category.hpp"
+#include "models/category.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <memory>
 

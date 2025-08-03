@@ -1,8 +1,8 @@
 #pragma once
 
-#include "category.hpp"
 #include "controllers/abstract.hpp"
-#include "transaction.hpp"
+#include "models/category.hpp"
+#include "models/transaction.hpp"
 #include "utils.hpp"
 
 namespace Plutus {
