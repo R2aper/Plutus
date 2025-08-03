@@ -15,11 +15,11 @@ public:
   virtual void Remove() {}
   virtual void Update() {}
 
+  virtual void UpdateTable() {}
+
 protected:
   std::shared_ptr<Table> table = nullptr;
   std::shared_ptr<sql::Database> db = nullptr;
-
-  virtual void UpdateTable() {}
 };
 
 } // namespace Plutus

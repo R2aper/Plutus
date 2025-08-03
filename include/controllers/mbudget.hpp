@@ -26,15 +26,15 @@ public:
   void Update(int64 id, double new_budget_amount);
 
   /// @brief Set period of budget(table will fetch budgets for this peruid)
-  void set_period(int _year, int _month) noexcept;
+  void set_period(int _year, int _month);
+
+  /// @brief Fetch table with database
+  void UpdateTable() override;
 
 private:
   // Period of budgets(We don't need to print all of them, just of given period)
   int year;
   int month;
-
-  /// @brief Fetch table with database
-  void UpdateTable() override;
 };
 
 } // namespace Plutus

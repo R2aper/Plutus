@@ -32,19 +32,19 @@ public:
               int64 new_category_id);
 
   /// @brief set period of transaction(table will fetch all transactions for this peruid)
-  void set_period(int _year, int _month) noexcept;
+  void set_period(int _year, int _month);
 
   /// @brief set id of category to show
-  void set_category_id(int64 id) noexcept;
+  void set_category_id(int64 id);
+
+  /// @brief Fetch table with database
+  void UpdateTable() override;
 
 private:
   // Period of transaction(We don't need to print all of them, just of given period)
   int year;
   int month;
   int64 category_id; // Id of current showing category
-
-  /// @brief Fetch table with database
-  void UpdateTable() override;
 };
 
 } // namespace Plutus
