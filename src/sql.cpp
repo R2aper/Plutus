@@ -167,4 +167,35 @@ sql::Database CreateDatabase(const std::string &name) {
   return db;
 }
 
+std::string getNameById(const sql::Database &db, int64 category_id) {
+  sql::Statement query(db, "SELECT name FROM categories WHERE id = ?");
+  query.bind(1, category_id);
+
+  return (query.executeStep()) ? query.getColumn(0).getString() : "";
+}
+
+bool isCategoryExist(const sql::Database &db, int64 category_id) {
+  sql::Statement query(db, "SELECT 1 FROM categories WHERE id = ?");
+  query.bind(1, category_id);
+
+  return query.executeStep();
+}
+
+bool isBudgetExist(const sql::Database &db, int64 category_id, int year, int month) {
+  sql::Statement query(
+      db, "SELECT 1 FROM monthly_budgets WHERE category_id = ? AND year = ? AND month = ?");
+  query.bind(1, category_id);
+  query.bind(2, year);
+  query.bind(3, month);
+
+  return query.executeStep();
+}
+
+bool isTransactionExist(const sql::Database &db, int64 id) {
+  sql::Statement query(db, "SELECT 1 FROM transactions WHERE id = ?");
+  query.bind(1, id);
+
+  return query.executeStep();
+}
+
 } // namespace Plutus

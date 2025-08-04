@@ -15,4 +15,10 @@ namespace Plutus {
  */
 sql::Database CreateDatabase(const std::string &name);
 
+std::string getNameById(const sql::Database &db, int64 category_id);
+
+bool isCategoryExist(const sql::Database &db, int64 category_id);
+bool isBudgetExist(const sql::Database &db, int64 category_id, int year, int month);
+bool isTransactionExist(const sql::Database &db, int64 id);
+
 } // namespace Plutus
