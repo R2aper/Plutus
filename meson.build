@@ -12,9 +12,9 @@ src = files(
   'src/main.cpp',
   'src/sql.cpp',
   'src/utils.cpp',
-  'src/category.cpp',
-  'src/transaction.cpp',
-  'src/mbudget.cpp',
+  'src/models/category.cpp',
+  'src/models/transaction.cpp',
+  'src/models/mbudget.cpp',
   'src/controllers/category.cpp',
   'src/controllers/mbudget.cpp',
   'src/controllers/transaction.cpp'

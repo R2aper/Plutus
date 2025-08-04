@@ -1,10 +1,8 @@
 #include "controllers/category.hpp"
 
-#include "category.hpp"
-#include <SQLiteCpp/SQLiteCpp.h>
+#include "models/category.hpp"
+#include "utils.hpp"
 #include <memory>
-
-namespace sql = SQLite;
 
 namespace Plutus {
 
@@ -21,6 +19,7 @@ void CategoryController::Insert(Category &ct) {
   insert.exec();
 
   ct.id = db->getLastInsertRowid();
+
   UpdateTable();
 }
 

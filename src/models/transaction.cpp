@@ -1,4 +1,4 @@
-#include "transaction.hpp"
+#include "models/transaction.hpp"
 
 namespace Plutus {
 

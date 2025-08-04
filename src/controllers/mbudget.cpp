@@ -1,5 +1,5 @@
 #include "controllers/mbudget.hpp"
-#include "mbudget.hpp"
+#include "models/mbudget.hpp"
 
 #include "utils.hpp"
 
@@ -12,7 +12,7 @@ BudgetController::BudgetController(std::shared_ptr<Table> table, std::shared_ptr
   UpdateTable();
 }
 
-void BudgetController::set_period(int _year, int _month) noexcept {
+void BudgetController::set_period(int _year, int _month) {
   year = _year;
   month = _month;
 

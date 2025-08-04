@@ -1,6 +1,6 @@
 #include "controllers/transaction.hpp"
 
-#include "transaction.hpp"
+#include "models/transaction.hpp"
 #include "utils.hpp"
 
 namespace Plutus {
@@ -14,12 +14,14 @@ TransactionController::TransactionController(std::shared_ptr<Table> table,
   UpdateTable();
 }
 
-void TransactionController::set_period(int _year, int _month) noexcept {
+void TransactionController::set_period(int _year, int _month)  {
   year = _year;
   month = _month;
+
+  UpdateTable();
 }
 
-void TransactionController::set_category_id(int64 id) noexcept { category_id = id; }
+void TransactionController::set_category_id(int64 id)  { category_id = id; UpdateTable(); }
 
 // TODO: add category by name
 void TransactionController::Insert(Transaction &tr) {

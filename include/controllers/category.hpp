@@ -2,7 +2,7 @@
 
 #include "controllers/abstract.hpp"
 
-#include "category.hpp"
+#include "models/category.hpp"
 #include "utils.hpp"
 
 namespace Plutus {
