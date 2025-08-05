@@ -16,7 +16,7 @@ struct MonthlyBudget {
 
   MonthlyBudget();
 
-  MonthlyBudget(int64 _id, const Category &ct, int _year, int _month_amount, double _budget_amount,
+  MonthlyBudget(int64 _id, const Category &ct, int _year, int _month, double _budget_amount,
                 double _actual_amount, double _difference_amount);
 
   /// @brief return string representation of MonthlyBudget

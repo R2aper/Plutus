@@ -37,7 +37,7 @@ void inline trigger_after_insert_transaction_create_budget(sql::Database &db) {
           "    VALUES (NEW.category_id, strftime('%Y', NEW.date), strftime('%m', NEW.date), 0.0, "
           "0.0, 0.0); "
           "    UPDATE monthly_budgets "
-          "    SET actual = actual + (-NEW.amount) "
+          "    SET actual = actual + (-NEW.amount), "
           "        difference = difference + NEW.amount "
           "    WHERE category_id = NEW.category_id "
           "    AND year = strftime('%Y', NEW.date) "
