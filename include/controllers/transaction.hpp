@@ -1,7 +1,7 @@
 #pragma once
 
-#include "models/category.hpp"
 #include "controllers/abstract.hpp"
+#include "models/category.hpp"
 #include "models/transaction.hpp"
 #include "utils.hpp"
 
@@ -16,11 +16,13 @@ public:
 
   /// @brief Insert Transaction into 'transactions' table of database
   /// @param mb New transaction
-  void Insert(Transaction &tr);
+  /// @return Result struct with boolean indicator of succes and std::string of error message
+  Result Insert(Transaction &tr);
 
   /// @brief Remove Transaction from database by id
   /// @param id Id of Transaction to remove
-  void Remove(int64 id);
+  /// @return Result struct with boolean indicator of succes and std::string of error message
+  Result Remove(int64 id);
 
   /// @brief Update existing Transaction in database by id
   /// @param id Id of  Transaction to update
@@ -28,8 +30,9 @@ public:
   /// @param new_note New note of transaction
   /// @param new_amount New amount of transaction
   /// @param new_category_id New category id of transaction
-  void Update(int64 id, const std::string &new_date, const std::string &new_note, double new_amount,
-              int64 new_category_id);
+  /// @return Result struct with boolean indicator of succes and std::string of error message
+  Result Update(int64 id, const std::string &new_date, const std::string &new_note,
+                double new_amount, int64 new_category_id);
 
   /// @brief set period of transaction(table will fetch all transactions for this peruid)
   void set_period(int _year, int _month);

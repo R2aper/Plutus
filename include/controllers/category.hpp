@@ -15,16 +15,19 @@ public:
 
   /// @brief Insert Category into 'categoreis' table of database
   /// @param ct New category
-  void Insert(Category &ct);
+  /// @return Result struct with boolean indicator of succes and std::string of error message
+  Result Insert(Category &ct);
 
   /// @brief Remove Category from database by id
   /// @param id Id of category to remove
-  void Remove(int64 id);
+  /// @return Result struct with boolean indicator of succes and std::string of error message
+  Result Remove(int64 id);
 
   /// @brief Update existing Category in database by id
   /// @param id Id of category to update
   /// @param new_name New name of Category
-  void Update(int64 id, const std::string &new_name);
+  /// @return Result struct with boolean indicator of succes and std::string of error message
+  Result Update(int64 id, const std::string &new_name);
 
   /// @brief Fetch table with database
   void UpdateTable() override;

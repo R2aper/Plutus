@@ -1,6 +1,7 @@
 #include "controllers/transaction.hpp"
 
 #include "models/transaction.hpp"
+#include "sql.hpp"
 #include "utils.hpp"
 
 namespace Plutus {
@@ -14,17 +15,24 @@ TransactionController::TransactionController(std::shared_ptr<Table> table,
   UpdateTable();
 }
 
-void TransactionController::set_period(int _year, int _month)  {
+void TransactionController::set_period(int _year, int _month) {
   year = _year;
   month = _month;
 
   UpdateTable();
 }
 
-void TransactionController::set_category_id(int64 id)  { category_id = id; UpdateTable(); }
+void TransactionController::set_category_id(int64 id) {
+  category_id = id;
+
+  UpdateTable();
+}
 
 // TODO: add category by name
-void TransactionController::Insert(Transaction &tr) {
+Result TransactionController::Insert(Transaction &tr) {
+  if (!isCategoryExist(*db, tr.category.id))
+    return {false, "Invalid category!"};
+
   sql::Statement insert(
       *db, "INSERT INTO transactions (date, note, amount, category_id) VALUES (?, ?, ?, ?)");
 
@@ -37,20 +45,30 @@ void TransactionController::Insert(Transaction &tr) {
   tr.id = db->getLastInsertRowid();
 
   UpdateTable();
+  return {true, ""};
 }
 
-void TransactionController::Remove(int64 id) {
+Result TransactionController::Remove(int64 id) {
+  if (!isTransactionExist(*db, id))
+    return {false, "Invalid id!"};
+
   sql::Statement remove(*db, "DELETE FROM transactions WHERE id = ?");
 
   remove.bind(1, id);
   remove.exec();
 
   UpdateTable();
+  return {true, ""};
 }
 
-void TransactionController::Update(int64 id, const std::string &new_date,
-                                   const std::string &new_note, double new_amount,
-                                   int64 new_category_id) {
+Result TransactionController::Update(int64 id, const std::string &new_date,
+                                     const std::string &new_note, double new_amount,
+                                     int64 new_category_id) {
+  if (!isTransactionExist(*db, id))
+    return {false, "Invalid id!"};
+  if (!isCategoryExist(*db, new_category_id))
+    return {false, "Invalid category!"};
+
   sql::Statement update(
       *db, "UPDATE transactions SET date = ?, note = ?, amount = ?, category_id = ? WHERE id = ?");
 
@@ -62,6 +80,7 @@ void TransactionController::Update(int64 id, const std::string &new_date,
   update.exec();
 
   UpdateTable();
+  return {true, ""};
 }
 
 void TransactionController::UpdateTable() {

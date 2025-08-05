@@ -21,4 +21,12 @@ using uint16 = unsigned short;
 
 using Table = std::vector<std::vector<std::string>>;
 
-namespace Plutus {}; // namespace Plutus
+namespace Plutus {
+struct Result {
+  bool is_success;
+  std::string error_msg;
+
+  friend bool operator!(const Result &r) { return r.is_success != true; }
+};
+
+}; // namespace Plutus

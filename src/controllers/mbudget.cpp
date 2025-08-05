@@ -1,6 +1,7 @@
 #include "controllers/mbudget.hpp"
 #include "models/mbudget.hpp"
 
+#include "sql.hpp"
 #include "utils.hpp"
 
 namespace Plutus {
@@ -19,7 +20,12 @@ void BudgetController::set_period(int _year, int _month) {
   UpdateTable();
 }
 
-void BudgetController::Insert(MonthlyBudget &mb) {
+Result BudgetController::Insert(MonthlyBudget &mb) {
+  if (!isCategoryExist(*db, mb.category.id))
+    return {false, "Invalid category!"};
+  if (isBudgetExist(*db, mb.category.id, mb.year, mb.month))
+    return {false, "Budget for this period already exist!"};
+
   sql::Statement insert(*db, "INSERT INTO monthly_budgets (category_id, year, month, "
                              "budget, difference, actual) VALUES (?, ?, ?, ?, ?, ?)");
 
@@ -34,25 +40,41 @@ void BudgetController::Insert(MonthlyBudget &mb) {
   mb.id = db->getLastInsertRowid();
 
   UpdateTable();
+  return {true, ""};
 }
 
-void BudgetController::Remove(int64 id) {
-  sql::Statement remove(*db, "DELETE FROM monthly_budgets WHERE id = ?");
+Result BudgetController::Remove(int64 category_id, int _year, int _month) {
+  if (!isBudgetExist(*db, category_id, _year, _month))
+    return {false, "No budget to remove!"};
 
-  remove.bind(1, id);
+  sql::Statement remove(
+      *db, "DELETE FROM monthly_budgets WHERE category_id = ? AND year = ? AND month = ?");
+
+  remove.bind(1, category_id);
+  remove.bind(2, _year);
+  remove.bind(3, _month);
   remove.exec();
 
   UpdateTable();
+  return {true, ""};
 }
 
-void BudgetController::Update(int64 id, double new_budget) {
-  sql::Statement update(*db, "UPDATE  monthly_budgets SET budget = ? WHERE id = ?");
+Result BudgetController::Update(int64 category_id, int _year, int _month, double new_budget) {
+  if (!isBudgetExist(*db, category_id, _year, _month))
+    return {false, "No budget to update"};
+
+  sql::Statement update(
+      *db,
+      "UPDATE monthly_budgets SET budget = ? WHERE category_id = ? AND year = ? AND month = ?");
 
   update.bind(1, new_budget);
-  update.bind(2, id);
+  update.bind(2, category_id);
+  update.bind(3, _year);
+  update.bind(4, _month);
   update.exec();
 
   UpdateTable();
+  return {true, ""};
 }
 
 void BudgetController::UpdateTable() {

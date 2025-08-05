@@ -36,28 +36,30 @@ int main(void) {
     BudgetController bc(BudgetsTable, db);
     TransactionController tc(TransactionTable, db);
 
-    Category ct;
-    ct.name = "Income";
-    cc.Insert(ct);
+    Category ct(0, "Grocery");
+    Result a = cc.Insert(ct);
+    if (!a) {
+      std::cerr << a.error_msg << '\n';
+      return 1;
+    }
 
-    MonthlyBudget mb;
-    mb.year = 2025;
-    mb.month = 7;
-    mb.budget_amount = 5000.0;
-    mb.actual_amount = 6000.0;
-    mb.difference_amount = mb.budget_amount - mb.actual_amount;
-    mb.category = ct;
-    bc.Insert(mb);
+    MonthlyBudget mb(0, ct, 2025, 7, 5000.0, 0.0, 0.0);
     bc.set_period(2025, 7);
+    a = bc.Insert(mb);
 
-    Transaction tr;
-    tr.amount = -500.0;
-    tr.category = ct;
-    tr.date = "2025-07-24";
-    tr.note = "Bread";
-    tc.Insert(tr);
-    tc.set_period(2025, 7);
+    if (!a) {
+      std::cerr << a.error_msg << '\n';
+      return 1;
+    }
+    Transaction tr(0, "2025-07-21", "Bread", -500.0, ct);
     tc.set_category_id(ct.id);
+    tc.set_period(2025, 7);
+    a = tc.Insert(tr);
+    if (!a) {
+      std::cerr << a.error_msg << '\n';
+      return 1;
+    }
+    bc.UpdateTable();
 
     std::cout << "Categories:" << '\n';
     print_table(*CategoriesTable);

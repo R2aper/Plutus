@@ -11,9 +11,9 @@ public:
   explicit AbstractController(std::shared_ptr<Table> _table, std::shared_ptr<sql::Database> _db)
       : table(_table), db(_db) {}
 
-  virtual void Insert() {}
-  virtual void Remove() {}
-  virtual void Update() {}
+  virtual Result Insert() { return {true, ""}; }
+  virtual Result Remove() { return {true, ""}; }
+  virtual Result Update() { return {true, ""}; }
 
   virtual void UpdateTable() {}
 

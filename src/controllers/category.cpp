@@ -1,6 +1,7 @@
 #include "controllers/category.hpp"
 
 #include "models/category.hpp"
+#include "sql.hpp"
 #include "utils.hpp"
 #include <memory>
 
@@ -12,7 +13,7 @@ CategoryController::CategoryController(std::shared_ptr<Table> table,
   UpdateTable();
 };
 
-void CategoryController::Insert(Category &ct) {
+Result CategoryController::Insert(Category &ct) {
   sql::Statement insert(*db, "INSERT INTO categories (name) VALUES (?)");
 
   insert.bind(1, ct.name);
@@ -21,18 +22,26 @@ void CategoryController::Insert(Category &ct) {
   ct.id = db->getLastInsertRowid();
 
   UpdateTable();
+  return {true, ""};
 }
 
-void CategoryController::Remove(int64 id) {
+Result CategoryController::Remove(int64 id) {
+  if (!isCategoryExist(*db, id))
+    return {false, "Invalid id!"};
+
   sql::Statement remove(*db, "DELETE FROM categories WHERE id = ?");
 
   remove.bind(1, id);
   remove.exec();
 
   UpdateTable();
+  return {true, ""};
 }
 
-void CategoryController::Update(int64 id, const std::string &new_name) {
+Result CategoryController::Update(int64 id, const std::string &new_name) {
+  if (!isCategoryExist(*db, id))
+    return {false, "Invalid id!"};
+
   sql::Statement update(*db, "UPDATE categories SET name = ? WHERE id = ?");
 
   update.bind(1, new_name);
@@ -40,6 +49,7 @@ void CategoryController::Update(int64 id, const std::string &new_name) {
   update.exec();
 
   UpdateTable();
+  return {true, ""};
 }
 
 void CategoryController::UpdateTable() {
